@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Justin's CISA Study Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --cream: #f5ecdc;
+    --cream2: #efe2c8;
+    --red: #a4231a;
+    --red-dark: #7c1a13;
+    --black: #201c14;
+    --muted: #8a7f66;
+    --line: #e0d2ab;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    padding:48px 20px;
+    min-height:100vh;
+    background: var(--cream);
+    font-family:'Inter', sans-serif;
+    color: var(--black);
+    display:flex;
+    justify-content:center;
+  }
+  .card{
+    width:100%;
+    max-width:860px;
+    background: var(--cream2);
+    border:2px solid var(--black);
+    border-radius:14px;
+    position:relative;
+    padding:0 0 36px;
+    box-shadow: 8px 8px 0 var(--red);
+    overflow:hidden;
+  }
+  .topbar{
+    background: var(--red);
+    padding:10px 26px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .topbar-label{
+    font-family:'Poppins', sans-serif;
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color: var(--cream);
+  }
+  .topbar-pepper{ font-size:16px; }
+  .content{ padding:32px 40px 0; }
+  .kicker{
+    font-family:'Poppins', sans-serif;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color: var(--red);
+    margin-bottom:8px;
+  }
+  h1{
+    font-family:'Poppins', sans-serif;
+    font-weight:800;
+    font-size:34px;
+    margin:0 0 8px 0;
+    color: var(--black);
+    line-height:1.1;
+  }
+  .subtitle{
+    font-size:14px;
+    color: var(--muted);
+    margin-bottom:28px;
+  }
+
+  /* Reward builder */
+  .burrito-section{
+    background: #fff;
+    border:2px solid var(--black);
+    border-radius:12px;
+    padding:22px 24px;
+    margin-bottom:26px;
+  }
+  .burrito-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .burrito-title{
+    font-family:'Poppins', sans-serif;
+    font-size:17px;
+    font-weight:700;
+    color: var(--black);
+  }
+  .burrito-meals{
+    font-size:13px;
+    color: var(--muted);
+  }
+  .burrito-meals strong{ color: var(--red); font-size:15px; }
+  .ingredients-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+  }
+  .ingredient{
+    flex:1;
+    min-width:80px;
+    text-align:center;
+    padding:14px 6px 10px;
+    border-radius:10px;
+    background: var(--cream);
+    border:1.5px dashed var(--line);
+    opacity:0.4;
+    filter: grayscale(1);
+    transition: all 0.25s ease;
+  }
+  .ingredient.earned{
+    opacity:1;
+    filter: none;
+    background: #fdf0e6;
+    border:1.5px solid var(--red);
+  }
+  .ingredient .icon{
+    font-size:26px;
+    display:block;
+    margin-bottom:6px;
+  }
+  .ingredient .name{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    font-weight:600;
+    color: var(--muted);
+  }
+  .ingredient.earned .name{ color: var(--red); }
+  .meal-progress-track{
+    height:12px;
+    width:100%;
+    background: var(--cream);
+    border:1.5px solid var(--black);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .meal-progress-fill{
+    height:100%;
+    background: var(--red);
+    transition: width 0.3s ease;
+  }
+  .next-portion-note{
+    font-size:13px;
+    color: var(--black);
+    margin-top:12px;
+    font-weight:500;
+  }
+  .meal-banner{
+    display:none;
+    margin-top:14px;
+    background: var(--red);
+    border-radius:8px;
+    padding:11px 14px;
+    font-family:'Poppins', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    color: var(--cream);
+    text-align:center;
+  }
+  .meal-banner.show{ display:block; }
+
+  .stats{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom:26px;
+  }
+  .stat-card{
+    flex:1;
+    min-width:140px;
+    background: #fff;
+    border:2px solid var(--black);
+    border-radius:10px;
+    padding:15px 18px;
+  }
+  .stat-card.red{ background: var(--red); border-color: var(--black); }
+  .stat-card.red .stat-label, .stat-card.red .stat-value{ color: var(--cream); }
+  .stat-label{
+    font-size:10px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    font-weight:600;
+    color: var(--muted);
+    margin-bottom:6px;
+  }
+  .stat-value{
+    font-family:'Poppins', sans-serif;
+    font-size:26px;
+    font-weight:800;
+    color: var(--black);
+  }
+  form{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    align-items:flex-end;
+    margin-bottom:30px;
+    padding-bottom:24px;
+    border-bottom:2px solid var(--line);
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+    font-size:11px;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    font-weight:600;
+    color: var(--muted);
+  }
+  .field label{ margin-bottom:7px; }
+  .field input, .field select{
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    padding:9px 10px;
+    border:1.5px solid var(--black);
+    border-radius:8px;
+    background:#fff;
+    color: var(--black);
+  }
+  .field input:focus, .field select:focus{
+    outline:none;
+    border-color: var(--red);
+  }
+  .field.notes{ flex:1; min-width:180px; }
+  button{
+    font-family:'Poppins', sans-serif;
+    font-size:14px;
+    letter-spacing:0.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    background: var(--red);
+    color:#fff;
+    border:2px solid var(--black);
+    padding:11px 24px;
+    border-radius:8px;
+    cursor:pointer;
+    transition: transform 0.1s ease;
+  }
+  button:hover{ background: var(--red-dark); transform: translateY(-1px); }
+  table{
+    width:100%;
+    border-collapse:collapse;
+  }
+  th{
+    text-align:left;
+    font-size:11px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    font-weight:700;
+    color: var(--black);
+    border-bottom:2px solid var(--black);
+    padding:8px 6px;
+  }
+  td{
+    padding:11px 6px;
+    font-size:14px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  td.hours{ font-weight:700; color: var(--red); white-space:nowrap; }
+  td.section{ color: var(--muted); font-size:13px; }
+  .del-btn{
+    background:none;
+    border:none;
+    color: var(--muted);
+    cursor:pointer;
+    font-size:15px;
+    padding:0;
+  }
+  .del-btn:hover{ color: var(--red); }
+  .empty{
+    text-align:center;
+    color: var(--muted);
+    padding:26px 0;
+    font-size:14px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="topbar">
+    <span class="topbar-label">🌶️ Justin's Study Log</span>
+    <span class="topbar-pepper">🌶️</span>
+  </div>
+  <div class="content">
+  <div class="kicker">CISA Exam Prep</div>
+  <h1>Study & Earn Your Bowl</h1>
+  <div class="subtitle">every 3 hours of studying builds one more layer of the meal.</div>
+
+  <div class="burrito-section">
+    <div class="burrito-header">
+      <div class="burrito-title">Current Build</div>
+      <div class="burrito-meals">Full meals earned: <strong id="mealsEarned">0</strong></div>
+    </div>
+    <div class="ingredients-row" id="ingredientsRow"></div>
+    <div class="meal-progress-track"><div class="meal-progress-fill" id="mealProgressFill" style="width:0%"></div></div>
+    <div class="next-portion-note" id="nextPortionNote"></div>
+    <div class="meal-banner" id="mealBanner">🥣 Whole meal unlocked — bowl's on you today!</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card red">
+      <div class="stat-label">Total hours</div>
+      <div class="stat-value" id="totalHours">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Sessions</div>
+      <div class="stat-value" id="totalSessions">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">This week</div>
+      <div class="stat-value" id="weekHours">0</div>
+    </div>
+  </div>
+
+  <form id="entryForm">
+    <div class="field">
+      <label for="date">Date</label>
+      <input type="date" id="date" required>
+    </div>
+    <div class="field">
+      <label for="hours">Hours</label>
+      <input type="number" id="hours" min="0.25" step="0.25" placeholder="1.5" required>
+    </div>
+    <div class="field">
+      <label for="section">Domain</label>
+      <select id="section">
+        <option>Information Systems Auditing</option>
+        <option>Governance & Management of IT</option>
+        <option>Information Systems Acquisition & Implementation</option>
+        <option>Information Systems Operations & Resilience</option>
+        <option>Protection of Information Assets</option>
+        <option>Practice Questions</option>
+        <option>Review</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field notes">
+      <label for="notes">Notes</label>
+      <input type="text" id="notes" placeholder="e.g. Domain 2 practice exam, chapter 4 reading">
+    </div>
+    <button type="submit">Add Entry</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Hours</th><th>Domain</th><th>Notes</th><th></th></tr>
+    </thead>
+    <tbody id="entriesBody"></tbody>
+  </table>
+  <div class="empty" id="emptyState">No sessions logged yet — first 3 hours gets you rice.</div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'justin_study_entries';
+const HOURS_PER_PORTION = 3;
+const INGREDIENTS = [
+  { icon: '🍚', name: 'Rice' },
+  { icon: '🫘', name: 'Beans' },
+  { icon: '🍗', name: 'Chicken' },
+  { icon: '🧀', name: 'Cheese' },
+  { icon: '🌶️', name: 'Salsa' },
+  { icon: '🥬', name: 'Lettuce' },
+  { icon: '🥑', name: 'Guac' },
+  { icon: '🥣', name: 'Bowl\'s Up' }
+];
+const PORTIONS_PER_MEAL = INGREDIENTS.length;
+const HOURS_PER_MEAL = HOURS_PER_PORTION * PORTIONS_PER_MEAL;
+
+function loadEntries(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveEntries(entries){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+let entries = loadEntries();
+
+const dateInput = document.getElementById('date');
+dateInput.valueAsDate = new Date();
+
+document.getElementById('entryForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const date = document.getElementById('date').value;
+  const hours = parseFloat(document.getElementById('hours').value);
+  const section = document.getElementById('section').value;
+  const notes = document.getElementById('notes').value.trim();
+  if(!date || !hours) return;
+  entries.push({ id: Date.now(), date, hours, section, notes });
+  saveEntries(entries);
+  document.getElementById('hours').value = '';
+  document.getElementById('notes').value = '';
+  render();
+});
+
+function deleteEntry(id){
+  entries = entries.filter(en => en.id !== id);
+  saveEntries(entries);
+  render();
+}
+
+function startOfWeek(){
+  const now = new Date();
+  const day = now.getDay();
+  const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+  const monday = new Date(now.setDate(diff));
+  monday.setHours(0,0,0,0);
+  return monday;
+}
+
+function renderIngredients(){
+  const total = entries.reduce((sum, en) => sum + en.hours, 0);
+  const totalPortionsEver = Math.floor(total / HOURS_PER_PORTION);
+  const mealsEarned = Math.floor(totalPortionsEver / PORTIONS_PER_MEAL);
+  const portionsIntoCurrentMeal = totalPortionsEver % PORTIONS_PER_MEAL;
+
+  const row = document.getElementById('ingredientsRow');
+  row.innerHTML = '';
+  INGREDIENTS.forEach((ing, i) => {
+    const div = document.createElement('div');
+    div.className = 'ingredient' + (i < portionsIntoCurrentMeal ? ' earned' : '');
+    div.innerHTML = `<span class="icon">${ing.icon}</span><span class="name">${ing.name}</span>`;
+    row.appendChild(div);
+  });
+
+  document.getElementById('mealsEarned').textContent = mealsEarned;
+
+  const pct = (portionsIntoCurrentMeal / PORTIONS_PER_MEAL) * 100;
+  document.getElementById('mealProgressFill').style.width = pct + '%';
+
+  const hoursIntoMeal = total - (mealsEarned * HOURS_PER_MEAL);
+  const hoursRemainingInMeal = HOURS_PER_MEAL - hoursIntoMeal;
+  const note = document.getElementById('nextPortionNote');
+  const banner = document.getElementById('mealBanner');
+
+  if (portionsIntoCurrentMeal === 0 && totalPortionsEver > 0 && mealsEarned > 0) {
+    banner.classList.add('show');
+    note.textContent = `Meal #${mealsEarned} complete. Onto the next bowl — ${round1(HOURS_PER_MEAL)} hours to go.`;
+  } else {
+    banner.classList.remove('show');
+    const hoursToNextPortion = HOURS_PER_PORTION - (total % HOURS_PER_PORTION);
+    const nextIngredient = INGREDIENTS[portionsIntoCurrentMeal] ? INGREDIENTS[portionsIntoCurrentMeal].name : 'Rice';
+    if (hoursToNextPortion < HOURS_PER_PORTION) {
+      note.textContent = `${round1(hoursToNextPortion)} more hour(s) unlocks ${nextIngredient}.`;
+    } else {
+      note.textContent = `Log ${HOURS_PER_PORTION} hours to unlock ${nextIngredient}.`;
+    }
+  }
+}
+
+function render(){
+  const sorted = [...entries].sort((a,b) => new Date(b.date) - new Date(a.date));
+  const body = document.getElementById('entriesBody');
+  body.innerHTML = '';
+  document.getElementById('emptyState').style.display = sorted.length ? 'none' : 'block';
+
+  sorted.forEach(en => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${formatDate(en.date)}</td>
+      <td class="hours">${en.hours}</td>
+      <td class="section">${en.section}</td>
+      <td>${en.notes ? escapeHtml(en.notes) : ''}</td>
+      <td><button class="del-btn" title="Delete">✕</button></td>
+    `;
+    tr.querySelector('.del-btn').addEventListener('click', () => deleteEntry(en.id));
+    body.appendChild(tr);
+  });
+
+  const total = entries.reduce((sum, en) => sum + en.hours, 0);
+  document.getElementById('totalHours').textContent = round1(total);
+  document.getElementById('totalSessions').textContent = entries.length;
+
+  const weekStart = startOfWeek();
+  const weekTotal = entries
+    .filter(en => new Date(en.date) >= weekStart)
+    .reduce((sum, en) => sum + en.hours, 0);
+  document.getElementById('weekHours').textContent = round1(weekTotal);
+
+  renderIngredients();
+}
+
+function round1(n){ return Math.round(n * 10) / 10; }
+
+function formatDate(d){
+  const dt = new Date(d + 'T00:00:00');
+  return dt.toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+render();
+</script>
+</body>
+</html>
